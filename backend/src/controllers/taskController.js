@@ -1,14 +1,23 @@
-const Task = require("../models/Task");
+import Task from "../models/Task.js";
 
-exports.createTask = async (req, res) => {
-  const task = await Task.create({
-    title: req.body.title,
-    user: req.userId
-  });
-  res.json(task);
+export const createTask = async (req, res) => {
+  try {
+    const task = await Task.create({
+      title: req.body.title,
+      user: req.userId,
+    });
+
+    return res.json(task);
+  } catch (err) {
+    return res.status(500).json({ message: "Failed to create task" });
+  }
 };
 
-exports.getTasks = async (req, res) => {
-  const tasks = await Task.find({ user: req.userId });
-  res.json(tasks);
+export const getTasks = async (req, res) => {
+  try {
+    const tasks = await Task.find({ user: req.userId });
+    return res.json(tasks);
+  } catch (err) {
+    return res.status(500).json({ message: "Failed to fetch tasks" });
+  }
 };

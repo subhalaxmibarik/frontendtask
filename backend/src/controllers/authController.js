@@ -1,20 +1,20 @@
-const User = require("../models/User");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+import User from "../models/User.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 // ================= REGISTER =================
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // 1️⃣ Validate input
+    // validate input
     if (!name || !email || !password) {
       return res.status(400).json({
         message: "Name, email and password are required",
       });
     }
 
-    // 2️⃣ Check if user already exists
+    // check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(409).json({
@@ -22,39 +22,39 @@ exports.register = async (req, res) => {
       });
     }
 
-    // 3️⃣ Hash password
+    // hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 4️⃣ Create user
+    // create user
     await User.create({
       name,
       email,
       password: hashedPassword,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "User registered successfully",
     });
   } catch (err) {
-    res.status(500).json({
+    return res.status(500).json({
       message: "Server error during registration",
     });
   }
 };
 
 // ================= LOGIN =================
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // 1️⃣ Validate input
+    // validate input
     if (!email || !password) {
       return res.status(400).json({
         message: "Email and password are required",
       });
     }
 
-    // 2️⃣ Check user exists
+    // check user
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({
@@ -62,7 +62,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    // 3️⃣ Compare password
+    // compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({
@@ -70,14 +70,14 @@ exports.login = async (req, res) => {
       });
     }
 
-    // 4️⃣ Generate JWT with expiry
+    // generate JWT
     const token = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
 
-    res.json({
+    return res.json({
       token,
       user: {
         id: user._id,
@@ -86,7 +86,7 @@ exports.login = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(500).json({
+    return res.status(500).json({
       message: "Server error during login",
     });
   }
