@@ -1,4 +1,4 @@
-export const API_URL = "http://localhost:5000/api"; // or your deployed backend URL
+export const API_URL = "https://frontendtask-4.onrender.com/api"; // or your deployed backend URL
 
 export const getToken = () => localStorage.getItem("token");
 
