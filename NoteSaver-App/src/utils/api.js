@@ -1,4 +1,4 @@
-export const API_URL = "https://frontendtask-4.onrender.com/api"; // or your deployed backend URL
+export const API_URL = import.meta.env.VITE_API_URL; // or your deployed backend URL
 
 export const getToken = () => localStorage.getItem("token");
 
